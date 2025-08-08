@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: 当前文件",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Pytest: 当前文件测试",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-q", "${file}"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Python: 运行 scripts/run_problem.py",
+      "type": "python",
+      "request": "launch",
+      "module": "scripts.run_problem",
+      "args": [],
+      "console": "integratedTerminal"
+    }
+  ]
+}
