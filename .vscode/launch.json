@@ -2,27 +2,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: 当前文件",
-      "type": "python",
+      "name": "▶ 运行当前文件",
+      "type": "debugpy",
       "request": "launch",
       "program": "${file}",
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "justMyCode": true
     },
     {
-      "name": "Pytest: 当前文件测试",
-      "type": "python",
+      "name": "▶ 运行草稿本",
+      "type": "debugpy",
       "request": "launch",
-      "module": "pytest",
-      "args": ["-q", "${file}"],
-      "console": "integratedTerminal"
-    },
-    {
-      "name": "Python: 运行 scripts/run_problem.py",
-      "type": "python",
-      "request": "launch",
-      "module": "scripts.run_problem",
-      "args": [],
-      "console": "integratedTerminal"
+      "program": "${workspaceFolder}/scratch.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
     }
   ]
 }

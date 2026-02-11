@@ -3,12 +3,11 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "python-datastructures-algorithms"
+name = "labuladong-learning"
 version = "0.1.0"
-description = "DSA practice in Python, organized by reusable templates"
+description = "跟着 labuladong 学算法 —— 个人学习记录与实现"
 readme = "README.md"
 requires-python = ">=3.11"
-authors = [{ name = "Your Name" }]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -17,7 +16,7 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["chapters"]
 addopts = "-q"
 
 [tool.black]
