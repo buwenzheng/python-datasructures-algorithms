@@ -3,11 +3,22 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "labuladong-learning"
+name = "dsa-learning"
 version = "0.1.0"
-description = "跟着 labuladong 学算法 —— 个人学习记录与实现"
+description = "个人算法学习工作台 —— 跟随 labuladong 完整目录系统学习数据结构与算法"
 readme = "README.md"
 requires-python = ">=3.11"
+dependencies = [
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "black>=23.0",
+    "ruff>=0.1",
+    "mypy>=1.0",
+]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -16,7 +27,9 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.pytest.ini_options]
-testpaths = ["chapters"]
+testpaths = ["chapters", "templates"]
+python_files = ["*_test.py", "test_*.py"]
+python_functions = ["test_*"]
 addopts = "-q"
 
 [tool.black]
@@ -25,10 +38,12 @@ target-version = ["py311"]
 
 [tool.ruff]
 line-length = 100
-select = ["E","F","I","N","UP","B"]
-ignore = ["E501"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B"]
+ignore = ["E501", "N802"]
+# N802: getVisualizationData 方法名必须用驼峰，因为 Debug Visualizer 扩展要汘该命名
 
 [tool.mypy]
 python_version = "3.11"
 strict = true
-

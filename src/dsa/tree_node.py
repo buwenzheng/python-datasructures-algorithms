@@ -7,11 +7,9 @@ print() 即可看到直观的树形结构。
 from __future__ import annotations
 
 from collections import deque
-from dataclasses import dataclass
-from typing import Iterable, List, Optional
+from collections.abc import Iterable
 
 
-@dataclass
 class TreeNode:
     """二叉树节点。
 
@@ -21,19 +19,26 @@ class TreeNode:
         right: 右子节点
     """
 
-    val: int
-    left: Optional["TreeNode"] = None
-    right: Optional["TreeNode"] = None
+    def __init__(
+        self,
+        val: int = 0,
+        left: TreeNode | None = None,
+        right: TreeNode | None = None,
+    ) -> None:
+        self.val = val
+        self.left = left
+        self.right = right
 
     def __str__(self) -> str:
         """可视化打印二叉树。
 
-        示例输出:
-            1
-           / \\
-          2   3
-           \\
-            4
+        示例输出::
+
+              1
+             / \\
+            2   3
+             \\
+              4
         """
         lines = _build_tree_lines(self)
         return "\n".join(lines)
@@ -41,8 +46,50 @@ class TreeNode:
     def __repr__(self) -> str:
         return self.__str__()
 
+    def __eq__(self, other: object) -> bool:
+        """按结构和值比较两棵二叉树是否相同。"""
+        if not isinstance(other, TreeNode):
+            return NotImplemented
+        return _tree_equal(self, other)
 
-def _build_tree_lines(node: Optional[TreeNode]) -> list[str]:
+    def to_list(self) -> list[int | None]:
+        """将二叉树序列化为层序数组（与 LeetCode 格式一致）。"""
+        return tree_to_list(self)
+
+    def getVisualizationData(self) -> str:
+        """返回 JSON 字符串，供 VSCode Debug Visualizer 扩展渲染。
+
+        使用方式：
+            1. 安装 Debug Visualizer 扩展（hediet.debug-visualizer）
+            2. F5 调试时，打开 Debug Visualizer 视图
+               （命令面板 → Debug Visualizer: New View）
+            3. 在表达式输入框中输入：root.getVisualizationData()
+            4. 单步调试时实时看到二叉树结构变化
+        """
+        import json
+
+        def build(node: TreeNode | None) -> dict | None:
+            if node is None:
+                return None
+            return {
+                "value": str(node.val),
+                "left": build(node.left),
+                "right": build(node.right),
+            }
+
+        return json.dumps({"kind": {"tree": True}, "root": build(self)})
+
+
+def _tree_equal(a: TreeNode | None, b: TreeNode | None) -> bool:
+    """递归比较两棵树是否结构和值都相同。"""
+    if a is None and b is None:
+        return True
+    if a is None or b is None:
+        return False
+    return a.val == b.val and _tree_equal(a.left, b.left) and _tree_equal(a.right, b.right)
+
+
+def _build_tree_lines(node: TreeNode | None) -> list[str]:
     """递归生成树的可视化行。"""
     if node is None:
         return []
@@ -83,7 +130,7 @@ def _build_tree_lines(node: Optional[TreeNode]) -> list[str]:
     return [root_line, connector] + merged
 
 
-def build_tree(values: Iterable[Optional[int]]) -> Optional[TreeNode]:
+def build_tree(values: Iterable[int | None]) -> TreeNode | None:
     """根据层序数组构造二叉树。
 
     None 表示空节点，与 LeetCode 输入格式一致。
@@ -92,37 +139,43 @@ def build_tree(values: Iterable[Optional[int]]) -> Optional[TreeNode]:
         >>> root = build_tree([1, 2, 3, None, 4])
         >>> print(root)
           1
-          / \\
-        2     3
+         / \\
+        2   3
          \\
           4
     """
-    values_list: List[Optional[int]] = list(values)
-    if not values_list:
+    values_list: list[int | None] = list(values)
+    if not values_list or values_list[0] is None:
         return None
-    iter_vals = iter(values_list)
-    root_val = next(iter_vals)
-    if root_val is None:
-        return None
-    root = TreeNode(root_val)
+    root = TreeNode(values_list[0])
     queue: deque[TreeNode] = deque([root])
-    for left_val, right_val in zip(iter_vals, iter_vals):
+    i = 1
+    n = len(values_list)
+    while queue and i < n:
         node = queue.popleft()
-        if left_val is not None:
-            node.left = TreeNode(left_val)
-            queue.append(node.left)
-        if right_val is not None:
-            node.right = TreeNode(right_val)
-            queue.append(node.right)
+        # 左子节点
+        if i < n:
+            left_val = values_list[i]
+            i += 1
+            if left_val is not None:
+                node.left = TreeNode(left_val)
+                queue.append(node.left)
+        # 右子节点
+        if i < n:
+            right_val = values_list[i]
+            i += 1
+            if right_val is not None:
+                node.right = TreeNode(right_val)
+                queue.append(node.right)
     return root
 
 
-def tree_to_list(root: Optional[TreeNode]) -> List[Optional[int]]:
+def tree_to_list(root: TreeNode | None) -> list[int | None]:
     """将二叉树序列化为层序数组。"""
     if root is None:
         return []
-    result: List[Optional[int]] = []
-    queue: deque[Optional[TreeNode]] = deque([root])
+    result: list[int | None] = []
+    queue: deque[TreeNode | None] = deque([root])
     while queue:
         node = queue.popleft()
         if node is None:
@@ -138,4 +191,3 @@ def tree_to_list(root: Optional[TreeNode]) -> List[Optional[int]]:
 
 
 __all__ = ["TreeNode", "build_tree", "tree_to_list"]
-
